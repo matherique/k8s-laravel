@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app1:
+    image: k8s-laravel-app1:latest
+    container_name: app1
+    ports:
+      - "9000:9000"
+    networks:
+      - laravel_network
+
+  app2:
+    image: k8s-laravel-app2:latest
+    container_name: app2
+    ports:
+      - "9000:9000"
+    networks:
+      - laravel_network
+
+  nginx:
+    image: k8s-laravel-nginx:latest
+    container_name: nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/app1.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app1
+    networks:
+      - laravel_network
+
+networks:
+  laravel_network:
+    driver: bridge
